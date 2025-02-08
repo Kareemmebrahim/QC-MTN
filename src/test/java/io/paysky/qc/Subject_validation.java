@@ -9,7 +9,7 @@ import io.qameta.allure.Owner;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class Create_Email_Notification {
+public class Subject_validation {
 
     private final OnboardingPage onboardingPage = new OnboardingPage();
     private final LoginPage loginPage = new LoginPage();
@@ -28,8 +28,8 @@ public class Create_Email_Notification {
     @Owner("Kareem Mohamed")
     public void testValidSubject() throws InterruptedException {
         loginPage.Login_admin_user();
-        createEmailNotification.createAndSaveEmailNotification("Valid Subject");
-        //Assert.assertTrue(createEmailNotification.isPopupDisplayed());
+        createEmailNotification.createAndSaveEmailNotification("Valid Subject","","test");
+
         logoutPage.Log_out_Admin_portal();
     }
 
@@ -38,8 +38,7 @@ public class Create_Email_Notification {
     @Owner("Kareem Mohamed")
     public void testInvalidShortSubject() throws InterruptedException {
         loginPage.Login_admin_user();
-        createEmailNotification.createAndSaveEmailNotification("H");
-        //Assert.assertFalse(createEmailNotification.isPopupDisplayed());
+        createEmailNotification.createAndSaveEmailNotification("H","","test");
         logoutPage.Log_out_Admin_portal();
     }
 
@@ -48,8 +47,15 @@ public class Create_Email_Notification {
     @Owner("Kareem Mohamed")
     public void testInvalidLongSubject() throws InterruptedException {
         loginPage.Login_admin_user();
-        createEmailNotification.createAndSaveEmailNotification("A".repeat(50)); // Use the long subject here
-        //Assert.assertFalse(createEmailNotification.isPopupDisplayed());
+        createEmailNotification.createAndSaveEmailNotification("A".repeat(50),"","test"); // Use the long subject here
+        logoutPage.Log_out_Admin_portal();
+    }
+    @Test(priority = 4, groups = {"End-To-End"})
+    @Description("Admin cannot create a notification email without subject")
+    @Owner("Kareem Mohamed")
+    public void testEmptySubject() throws InterruptedException {
+        loginPage.Login_admin_user();
+        createEmailNotification.createAndSaveEmailNotification("","","test");
         logoutPage.Log_out_Admin_portal();
     }
 }

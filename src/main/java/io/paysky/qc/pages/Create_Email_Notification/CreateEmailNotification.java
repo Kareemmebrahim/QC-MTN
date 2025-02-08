@@ -2,7 +2,6 @@ package io.paysky.qc.pages.Create_Email_Notification;
 
 import io.paysky.qc.utilities.selenium.DriverFactory;
 import org.openqa.selenium.By;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -31,26 +30,54 @@ public class CreateEmailNotification {
         subjectField.sendKeys(subject);
     }
 
-    // Method to click the "Add" button to save the notification
-    public void addNotification() {
-        WebElement addButton = waitForElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[3]/div/button"));
-        addButton.click();
+    // Helper method to fill the CC and BCC fields
+    private void fillCcBccField(String Email) {
+
+        //insert Emails in CC Field
+        WebElement CcField = waitForElement(By.xpath("//textarea[@id='inputTemplate' and @title='CC']"));
+        CcField.clear();
+        CcField.sendKeys(Email);
+
+        //inset Emails in Bcc Field
+        WebElement BccField = waitForElement(By.xpath("//textarea[@id='inputTemplate' and @title='BCC']"));
+        BccField.clear();
+        BccField.sendKeys(Email);
     }
 
-    // Method to check if the success popup is displayed
-    public boolean isPopupDisplayed() {
+    //helper method to fill Description field with rich text
+    private void fillDescriptionField(String RichText){
+        WebElement descriptionField = waitForElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[2]/form/div/div[1]/rich-text-editor/ckeditor/div[2]/div[2]/div"));
+        descriptionField.sendKeys(RichText);
+    }
+
+    //Method to check if an error message is displayed with invalid emails
+    public boolean ErrorMessageForInvalidEmail() {
+       try {
+           WebElement errorMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
+                   .until(ExpectedConditions
+                           .visibilityOfElementLocated(By.xpath("/html/body/app-root/p-toast/div/p-toastitem/div/div/div/div[1]")));
+           return errorMessage.isDisplayed();
+       } catch (Exception e) {
+           return false;
+       }
+    }
+
+    public boolean SuccessMessageForValidEmail() {
         try {
-            WebElement popup = new WebDriverWait(driver, Duration.ofSeconds(10))
+            WebElement successMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
                     .until(ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("/html/body/modal-container/div[2]/div/app-message-modal/div/div[2]")));
-            return popup.isDisplayed();
+                            By.xpath("//modal-container//div[@class='modal-body']")
+                    ));
+
+            String actualMessage = successMessage.getText().trim();
+            return actualMessage.equals("Notification has been successfully added");
         } catch (Exception e) {
             return false;
         }
     }
 
     // Method to create and save an email notification
-    public void createAndSaveEmailNotification(String subject) throws InterruptedException {
+    public void createAndSaveEmailNotification(String subject,String Email,String RichText) throws InterruptedException {
         // Step 1: Navigate to the Notifications page
         driver.findElement(By.xpath("/html/body/app-root/app-fee-management/app-sidebar/div/div[1]/div/ul[8]/li/a/span")).click();
         Thread.sleep(10000);
@@ -65,18 +92,36 @@ public class CreateEmailNotification {
                 .click();
         driver.findElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[2]/form/div/div[4]/app-select-dropdown/field-container/div/select/option[2]"))
                 .click();
+        //select the Action
+        driver.findElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[2]/form/div/div[2]/app-select-dropdown/field-container/div/select"))
+                .click();
+        driver.findElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[2]/form/div/div[2]/app-select-dropdown/field-container/div/select/option[1]"))
+                .click();
+        //select status
+        driver.findElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[2]/form/div/div[5]/app-select-dropdown/field-container/div/select"))
+                .click();
+        driver.findElement(By.xpath("/html/body/app-root/app-notifications-details/app-sidebar/div/div[2]/div/div[2]/form/div/div[5]/app-select-dropdown/field-container/div/select/option[1]"))
+                .click();
 
         // Step 4: Fill the Subject field
         fillSubjectField(subject);
 
-        // Step 5: Save the notification
-        addNotification();
+        //Step 5: Fill the CC and Bcc fields
+        fillCcBccField(Email);
 
-        // Step 6: Verify if the popup is displayed
-        if (isPopupDisplayed()) {
-            System.out.println("Success: Email notification created successfully.");
-        } else {
-            System.out.println("Fail: Email notification was not created.");
-        }
+        //Step 6 : Fill the Description field
+        fillDescriptionField(RichText);
+
+        // Step 7: Save the notification
+        WebElement addButton = waitForElement(By.xpath("//button[@class='add-button' and .//img[@alt='No Image']]"));
+        addButton.click();
+        Thread.sleep(10000);
+
+        // Step 8: Verify if the popup is displayed
+//        if (isPopupDisplayed()) {
+//            System.out.println("Success: Email notification created successfully.");
+//        } else {
+//            System.out.println("Fail: Email notification was not created.");
+//        }
     }
 }
