@@ -7,6 +7,10 @@ import io.paysky.qc.pages.Create_Order.CreateOrder;
 import io.paysky.qc.pages.Dispatch_Order.DispatchOrder;
 import io.paysky.qc.pages.Login.LoginPage;
 import io.paysky.qc.pages.Logout.Logout;
+import io.paysky.qc.utilities.ApiCaller;
+import io.paysky.qc.utilities.Get_Request_Id;
+import io.paysky.qc.utilities.testdata.Constant;
+
 import io.qameta.allure.Description;
 import io.qameta.allure.Link;
 import io.qameta.allure.Owner;
@@ -35,40 +39,37 @@ public class Create_order {
     }
 
     @org.testng.annotations.Test(priority = 2)
-    @Description("Check that the user can login with valid credentials")
+    @Description("Create a new product")
     @Link("https://devops.paysky.io/DefaultCollection/Infinity/_workitems/edit/62811")
     @Owner("Mohamed Ehab")
     @Tag("End-To-End")
-
     public void CreateNewProduct() throws Exception {
         createNewProduct.createNewProduct();
         logoutPage.Log_out_merchant_portal();
     }
 
     @org.testng.annotations.Test(priority = 3)
-    @Description("Check that the user can login with valid credentials")
+    @Description("Login as operation user")
     @Link("https://devops.paysky.io/DefaultCollection/Infinity/_workitems/edit/62811")
     @Owner("Mohamed Ehab")
     @Tag("End-To-End")
-
     public void LoginWithOperation() throws Exception {
         onboardingPage.setUp();
         loginPage.Login_operation_user();
     }
 
     @org.testng.annotations.Test(priority = 4)
-    @Description("Check that the user can login with valid credentials")
+    @Description("Approve the product")
     @Link("https://devops.paysky.io/DefaultCollection/Infinity/_workitems/edit/62811")
     @Owner("Mohamed Ehab")
     @Tag("End-To-End")
-
     public void ApproveProduct() throws Exception {
         approveProduct.Approve_Product();
         logoutPage.Log_out_operation_portal();
     }
 
     @org.testng.annotations.Test(priority = 5)
-    @Description("Check that the user can login with valid credentials")
+    @Description("Login as customer user")
     @Link("https://devops.paysky.io/DefaultCollection/Infinity/_workitems/edit/62811")
     @Owner("Mohamed Ehab")
     @Tag("End-To-End")
@@ -79,7 +80,7 @@ public class Create_order {
     }
 
     @org.testng.annotations.Test(priority = 6)
-    @Description("Check that the user can login with valid credentials")
+    @Description("Create an order")
     @Link("https://devops.paysky.io/DefaultCollection/Infinity/_workitems/edit/62811")
     @Owner("Mohamed Ehab")
     @Tag("End-To-End")
@@ -89,7 +90,7 @@ public class Create_order {
     }
 
     @org.testng.annotations.Test(priority = 7)
-    @Description("Check that the user can login with valid credentials")
+    @Description("Dispatch the order")
     @Link("https://devops.paysky.io/DefaultCollection/Infinity/_workitems/edit/62811")
     @Owner("Mohamed Ehab")
     @Tag("End-To-End")
@@ -101,6 +102,24 @@ public class Create_order {
         logoutPage.Log_out_merchant_portal();
     }
 
+    @org.testng.annotations.Test(priority = 8)
+    @Description("Fetch the RequestId after order dispatch and delivered it")
+    @Owner("kareem Mohamed")
+    @Tag("End-To-End")
+    public void DeliverOrder() {
+        // Fetch the RequestId using the OrderNumber from Constant
+        String orderNumber = Constant.OrderNumber; // Ensure this is set during CreateOrder
+        String requestId = Get_Request_Id.getRequestId(orderNumber);
+
+        if (requestId != null) {
+            System.out.println("RequestId fetched after dispatch: " + requestId);
+
+            // Send a POST request with the RequestId (using ApiCaller)
+            ApiCaller.sendPostRequest(orderNumber);  // This will send the request using the API
+        } else {
+            System.err.println("Failed to fetch RequestId for OrderNumber: " + orderNumber);
+        }
+    }
     @AfterTest
     public void CloseDriver() throws InterruptedException {
         logoutPage.Close_driver();

@@ -35,11 +35,10 @@ public class CreateOrder {
         Thread.sleep(50000);
         driver.get(GlobalProperties.getProperty("Customer_Portal_Orders"));
         Thread.sleep(10000);
-        String Order_Number = driver.findElement(By.xpath("/html/body/app-root/section/div/div/div/app-main-landing/div/app-index/div/section/div/div[3]/a[1]/div[1]/div[2]/span[2]")).getText();
-        Constant.OrderNumber = Order_Number;
+        Constant.OrderNumber  = driver.findElement(By.xpath("/html/body/app-root/section/div/div/div/app-main-landing/div/app-index/div/section/div/div[3]/a[1]/div[1]/div[2]/span[2]")).getText();
+       // Constant.OrderNumber = orderNumber;
 //        String actualText = driver.findElement(By.xpath("/html/body/app-root/section/div/div/div/app-main-landing/div/app-order-placed/section/div/div/div/div/div[2]/p[1]")).getText();
 //        Assert.assertEquals("Text does not match!", " Your order has been placed successfully ", actualText);
 //        Thread.sleep(5000);
     }
-
 }
