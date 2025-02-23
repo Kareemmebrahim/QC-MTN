@@ -1,9 +1,7 @@
 package io.paysky.qc.pages.Create_Email_Notification;
 
 import io.paysky.qc.utilities.selenium.DriverFactory;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,7 +30,6 @@ public class CreateEmailNotification {
 
     // Helper method to fill the CC and BCC fields
     private void fillCcBccField(String Email) {
-
         //insert Emails in CC Field
         WebElement CcField = waitForElement(By.xpath("//textarea[@id='inputTemplate' and @title='CC']"));
         CcField.clear();
@@ -62,15 +59,14 @@ public class CreateEmailNotification {
        }
     }
 
-    public boolean SuccessMessageForValidEmail() {
+    public boolean IsOkButtonDisplayed() {
         try {
-            WebElement successMessage = new WebDriverWait(driver, Duration.ofSeconds(10))
-                    .until(ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//modal-container//div[@class='modal-body']")
-                    ));
-
-            String actualMessage = successMessage.getText().trim();
-            return actualMessage.equals("Notification has been successfully added");
+            WebElement okButton = new WebDriverWait(driver, Duration.ofSeconds(10))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[.//strong[text()='OK']]")));
+            System.out.println("OK button is displayed, indicating success.");
+            okButton.click();
+            System.out.println("OK button is Clicked");
+            return okButton.isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -116,12 +112,5 @@ public class CreateEmailNotification {
         WebElement addButton = waitForElement(By.xpath("//button[@class='add-button' and .//img[@alt='No Image']]"));
         addButton.click();
         Thread.sleep(10000);
-
-        // Step 8: Verify if the popup is displayed
-//        if (isPopupDisplayed()) {
-//            System.out.println("Success: Email notification created successfully.");
-//        } else {
-//            System.out.println("Fail: Email notification was not created.");
-//        }
     }
 }

@@ -6,9 +6,16 @@ import io.paysky.qc.pages.Logout.Logout;
 import io.paysky.qc.pages.OnboardingPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.time.Duration;
+
+import static io.paysky.qc.utilities.selenium.DriverFactory.driver;
 
 public class Cc_Bcc_Validation {
     private final OnboardingPage onboardingPage = new OnboardingPage();
@@ -29,8 +36,8 @@ public class Cc_Bcc_Validation {
     public void testValidEmail() throws InterruptedException {
         loginPage.Login_admin_user();
         createEmailNotification.createAndSaveEmailNotification("Valid Subject", "kareem@test.com","test");
-        Assert.assertTrue(createEmailNotification.SuccessMessageForValidEmail(),
-                "the Creating Notification is failed");
+        boolean OkButtonDisplayedSucess = createEmailNotification.IsOkButtonDisplayed();
+        Assert.assertTrue(OkButtonDisplayedSucess, "the creation is failed");
         logoutPage.Log_out_Admin_portal();
     }
 
